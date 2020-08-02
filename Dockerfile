@@ -24,4 +24,3 @@ RUN set -eux \
         racket \
     && rm -rf /var/lib/apt/lists/*
 
-CMD ["raco", "instal", "pkg", "--auto", "racket-langserver"]
