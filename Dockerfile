@@ -16,6 +16,7 @@ RUN set -eux \
 	&& ./configure --prefix=/usr/local \
 	&& make \
 	&& make install \
+	&& raco pkg install --auto racket-language-server \
 	&& cd / \
 	&& apt-get -y remove --purge build-essential \
 	&& apt-get -y autoremove \
