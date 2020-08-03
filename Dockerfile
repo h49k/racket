@@ -1,26 +1,25 @@
 FROM ubuntu:focal
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		ca-certificates \
-		curl \
-		netbase \
-        software-properties-common \
-	&& rm -rf /var/lib/apt/lists/*
-
-RUN set -ex; \
-	if ! command -v gpg > /dev/null; then \
-		apt-get update; \
-		apt-get install -y --no-install-recommends \
-			gnupg \
-			dirmngr \
-		; \
-		rm -rf /var/lib/apt/lists/*; \
-	fi
+ARG RACKET_VARSION=7.8
+ARG PACKAGE=racket-${RACKET_VARSION}-src-builtpkgs.tgz
 
 RUN set -eux \
-    && add-apt-repository ppa:plt/racket && apt-get update \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        racket \
-    && rm -rf /var/lib/apt/lists/*
+	&& apt-get update && apt-get install -y --no-install-recommends \
+		ca-certificates \
+		apt-utils \
+		curl \
+		build-essential \
+	&& cd / \
+	&& curl -s -OL https://mirror.racket-lang.org/installers/${RACKET_VARSION}/${PACKAGE} \
+	&& tar -zxf ${PACKAGE} \
+	&& cd /racket-${RACKET_VARSION}/src \
+	&& ./configure --prefix=/usr/local \
+	&& make \
+	&& make install \
+	&& cd / \
+	&& apt-get -y remove --purge build-essential \
+	&& apt-get -y autoremove \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& rm -rf /racket-${RACKET_VARSION} \
+	&& rm -f racket-${RACKET_VARSION}src-builtpkgs.tgz
 
